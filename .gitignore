@@ -1,2 +1,11 @@
+# secrets
 secrets
 .json
+
+# pycharm
+.idea/
+
+# terraform
+.terraform.lock.hcl
+.terraform/
+terraform.tfstate
