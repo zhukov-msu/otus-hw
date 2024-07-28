@@ -2,6 +2,10 @@
 
 ## Решение задания 2
 
+### 1. terraform
+
+Скрипт в ```main.tf```
+
 ### 2. S3 bucket
 
 ```s3://otus-hw-bucket``` доступен тут: https://console.yandex.cloud/folders/b1gmi1gs1575jti9jgnl/storage/buckets/otus-hw-bucket
