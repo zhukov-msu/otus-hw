@@ -10,6 +10,14 @@
 
 ```s3://otus-hw-bucket``` доступен тут: https://console.yandex.cloud/folders/b1gmi1gs1575jti9jgnl/storage/buckets/otus-hw-bucket
 
+### 3. dataproc
+
+```main.tf```
+```create_cluster.tf```
+
+### 4. s3 -> hdfs
+
+![Скриншот с кластера](resources/hdfs.png)
 
 ## Решение задания 1
 
