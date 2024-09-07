@@ -1,4 +1,4 @@
-resource "yandex_dataproc_cluster" "hw_cluster" {
+resource "yandex_dataproc_cluster" "hw-cluster" {
   depends_on = [yandex_resourcemanager_folder_iam_binding.dataproc]
 
   bucket      = yandex_storage_bucket.hw-bucket.bucket
@@ -7,8 +7,10 @@ resource "yandex_dataproc_cluster" "hw_cluster" {
   labels = {
     created_by = "terraform"
   }
-  service_account_id = yandex_iam_service_account.dataproc.id
+  service_account_id = yandex_iam_service_account.data-proc-sa.id
   zone_id            = "ru-central1-a"
+#   ui_proxy = true
+#   security_group_ids = ["enp8e7sle15o07r58k9b"]
 
   cluster_config {
     # Certain cluster version can be set, but better to use default value (last stable version)
@@ -32,8 +34,22 @@ resource "yandex_dataproc_cluster" "hw_cluster" {
         disk_type_id       = "network-hdd"
         disk_size          = 40
       }
-      subnet_id   = yandex_vpc_subnet.hw_subnet.id
+#       subnet_id   = "default-ru-central1-a"
+      subnet_id   =  yandex_vpc_subnet.hw_subnet.id
       hosts_count = 1
+    }
+
+    subcluster_spec {
+      name = "compute"
+      role = "COMPUTENODE"
+      resources {
+        resource_preset_id = "s3-c4-m16"
+        disk_type_id       = "network-hdd"
+        disk_size          = 64
+      }
+#       subnet_id   = "default-ru-central1-a"
+      subnet_id   =  yandex_vpc_subnet.hw_subnet.id
+      hosts_count = 3
     }
 
     subcluster_spec {
@@ -42,10 +58,11 @@ resource "yandex_dataproc_cluster" "hw_cluster" {
       resources {
         resource_preset_id = "s3-c4-m16"
         disk_type_id       = "network-hdd"
-        disk_size          = 128
+        disk_size          = 64
       }
-      subnet_id   = yandex_vpc_subnet.hw_subnet.id
-      hosts_count = 3
+#       subnet_id   = "default-ru-central1-a"
+      subnet_id   =  yandex_vpc_subnet.hw_subnet.id
+      hosts_count = 2
     }
   }
 }
@@ -55,6 +72,7 @@ resource "yandex_vpc_network" "hw_network" {
 }
 
 resource "yandex_vpc_subnet" "hw_subnet" {
+  name           = "hw_subnet"
   zone           = "ru-central1-a"
   network_id     = yandex_vpc_network.hw_network.id
   v4_cidr_blocks = ["10.1.0.0/24"]
@@ -76,35 +94,34 @@ resource "yandex_vpc_route_table" "rt" {
   }
 }
 
-resource "yandex_iam_service_account" "dataproc" {
-  name        = "dataproc"
+resource "yandex_iam_service_account" "data-proc-sa" {
+  name        = "data-proc-sa"
   description = "service account to manage Dataproc Cluster"
 }
 
-data "yandex_resourcemanager_folder" "hw_cluster_folder" {
+data "yandex_resourcemanager_folder" "hw-cluster-folder" {
   folder_id = local.folder_id
 }
 
-
 resource "yandex_resourcemanager_folder_iam_binding" "dataproc" {
-  folder_id = data.yandex_resourcemanager_folder.hw_cluster_folder.id
+  folder_id = data.yandex_resourcemanager_folder.hw-cluster-folder.id
   role      = "mdb.dataproc.agent"
   members = [
-    "serviceAccount:${yandex_iam_service_account.dataproc.id}",
+    "serviceAccount:${yandex_iam_service_account.data-proc-sa.id}",
   ]
 }
 
 # required in order to create bucket
 resource "yandex_resourcemanager_folder_iam_binding" "bucket-creator" {
-  folder_id = data.yandex_resourcemanager_folder.hw_cluster_folder.id
+  folder_id = data.yandex_resourcemanager_folder.hw-cluster-folder.id
   role      = "editor"
   members = [
-    "serviceAccount:${yandex_iam_service_account.dataproc.id}",
+    "serviceAccount:${yandex_iam_service_account.data-proc-sa.id}",
   ]
 }
 
 resource "yandex_iam_service_account_static_access_key" "cluster_static_key" {
-  service_account_id = yandex_iam_service_account.dataproc.id
+  service_account_id = yandex_iam_service_account.data-proc-sa.id
 }
 
 resource "yandex_storage_bucket" "hw-bucket" {

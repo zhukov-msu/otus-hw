@@ -69,5 +69,3 @@ resource "yandex_storage_bucket" "test" {
   bucket = "otus-hw-bucket"
 }
 
-
-

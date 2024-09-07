@@ -8,4 +8,4 @@ secrets
 # terraform
 .terraform.lock.hcl
 .terraform/
-terraform.tfstate
+terraform.tfstate.venv
