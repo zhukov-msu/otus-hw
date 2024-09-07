@@ -9,7 +9,7 @@ resource "yandex_dataproc_cluster" "hw-cluster" {
   }
   service_account_id = yandex_iam_service_account.data-proc-sa.id
   zone_id            = "ru-central1-a"
-#   ui_proxy = true
+  ui_proxy = true
 #   security_group_ids = ["enp8e7sle15o07r58k9b"]
 
   cluster_config {
