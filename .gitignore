@@ -9,6 +9,18 @@ secrets
 .terraform.lock.hcl
 .terraform/
 terraform.tfstate.venv
-
+terraform.tfstate
+terraform.tfstate.*
+terraform_temp.txt
 # envs
 .venv
+
+# jupyter
+.ipynb_checkpoints/
+.virtual_documents
+
+# feast
+notebooks/hw35/feature_repo/data
+
+# sh
+*.sh
