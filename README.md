@@ -2,7 +2,7 @@
 
 ## Решение задачния по Feast
 
-![Получившийся Фичестор](resources/hdfs.png)
+![Получившийся Фичестор](resources/feast-ui.png)
 
 Использование стора: ```notebooks/hw35/feature_repo/hw3.5_feast.ipynb```
 
