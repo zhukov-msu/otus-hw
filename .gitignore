@@ -9,3 +9,6 @@ secrets
 .terraform.lock.hcl
 .terraform/
 terraform.tfstate.venv
+
+# envs
+.venv
