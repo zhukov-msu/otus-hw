@@ -1,5 +1,11 @@
 # otus-hw
 
+## Решение задачния по Feast
+
+![Получившийся Фичестор](resources/hdfs.png)
+
+Использование стора: ```notebooks/hw35/feature_repo/hw3.5_feast.ipynb```
+
 ## Решение задания 2
 
 ### 1. terraform
