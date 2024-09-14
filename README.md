@@ -1,10 +1,15 @@
 # otus-hw
 
-## Решение задачния по Feast
+## Решение задачния 3.5 (по Feast)
+
+### Получившийся Фичестор
 
 ![Получившийся Фичестор](resources/feast-ui.png)
 
+### Код
+
 Использование стора: ```notebooks/hw35/feature_repo/hw3.5_feast.ipynb```
+Feature repo: ```notebooks/hw35/feature_repo/example_repo.py```
 
 ## Решение задания 2
 
