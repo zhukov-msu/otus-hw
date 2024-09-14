@@ -8,8 +8,8 @@
 
 ### Код
 
-Использование стора: ```notebooks/hw35/feature_repo/hw3.5_feast.ipynb```
-Feature repo: ```notebooks/hw35/feature_repo/example_repo.py```
+* Использование стора: ```notebooks/hw35/feature_repo/hw3.5_feast.ipynb```
+* Feature repo: ```notebooks/hw35/feature_repo/example_repo.py```
 
 ## Решение задания 2
 
