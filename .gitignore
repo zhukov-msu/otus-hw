@@ -23,4 +23,4 @@ terraform_temp.txt
 notebooks/hw35/feature_repo/data
 
 # sh
-*.sh
+activate.sh
