@@ -1,9 +1,9 @@
-resource "yandex_dataproc_cluster" "hw-cluster" {
+resource "yandex_dataproc_cluster" "hw-cluster-2" {
   depends_on = [yandex_resourcemanager_folder_iam_binding.dataproc]
 
   bucket      = yandex_storage_bucket.hw-bucket.bucket
   description = "Dataproc Cluster created by Terraform for OTUS MLOps course"
-  name        = "hw-cluster"
+  name        = "hw-cluster-2"
   labels = {
     created_by = "terraform"
   }
@@ -40,29 +40,16 @@ resource "yandex_dataproc_cluster" "hw-cluster" {
     }
 
     subcluster_spec {
-      name = "compute"
-      role = "COMPUTENODE"
-      resources {
-        resource_preset_id = "s3-c4-m16"
-        disk_type_id       = "network-hdd"
-        disk_size          = 64
-      }
-#       subnet_id   = "default-ru-central1-a"
-      subnet_id   =  yandex_vpc_subnet.hw_subnet.id
-      hosts_count = 3
-    }
-
-    subcluster_spec {
       name = "data"
       role = "DATANODE"
       resources {
         resource_preset_id = "s3-c4-m16"
         disk_type_id       = "network-hdd"
-        disk_size          = 64
+        disk_size          = 128
       }
 #       subnet_id   = "default-ru-central1-a"
       subnet_id   =  yandex_vpc_subnet.hw_subnet.id
-      hosts_count = 2
+      hosts_count = 3
     }
   }
 }
