@@ -8,7 +8,7 @@ resource "yandex_dataproc_cluster" "hw-cluster-2" {
     created_by = "terraform"
   }
   service_account_id = yandex_iam_service_account.data-proc-sa.id
-  zone_id            = "ru-central1-a"
+  zone_id            = "ru-central1-b"
   ui_proxy = true
 #   security_group_ids = ["enp8e7sle15o07r58k9b"]
 
@@ -60,7 +60,7 @@ resource "yandex_vpc_network" "hw_network" {
 
 resource "yandex_vpc_subnet" "hw_subnet" {
   name           = "hw_subnet"
-  zone           = "ru-central1-a"
+  zone           = "ru-central1-b"
   network_id     = yandex_vpc_network.hw_network.id
   v4_cidr_blocks = ["10.1.0.0/24"]
   route_table_id = yandex_vpc_route_table.rt.id
