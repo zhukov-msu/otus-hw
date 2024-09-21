@@ -24,3 +24,7 @@ notebooks/hw35/feature_repo/data
 
 # sh
 activate.sh
+
+# airflow
+.env
+logs/
