@@ -13,6 +13,7 @@ apache-airflow-providers-http==4.13.0
 apache-airflow-providers-imap==3.7.0
 apache-airflow-providers-smtp==1.8.0
 apache-airflow-providers-sqlite==3.9.0
+apache-airflow-providers-ssh==3.13.1
 apispec==6.6.1
 appnope==0.1.4
 argcomplete==3.5.0
@@ -27,6 +28,7 @@ attrs==24.2.0
 babel==2.16.0
 backcall==0.2.0
 backports.zoneinfo==0.2.1
+bcrypt==4.2.0
 beautifulsoup4==4.12.3
 bleach==6.1.0
 blinker==1.8.2
@@ -148,6 +150,7 @@ overrides==7.7.0
 packaging==23.2
 pandas==2.0.0
 pandocfilters==1.5.1
+paramiko==3.5.0
 parso==0.8.4
 pathspec==0.12.1
 pendulum==3.0.0
@@ -169,6 +172,7 @@ pyarrow==14.0.0
 pycparser==2.22
 pygments==2.18.0
 PyJWT==2.9.0
+PyNaCl==1.5.0
 pyparsing==3.1.1
 python-daemon==3.0.1
 python-dateutil==2.8.2
@@ -196,6 +200,7 @@ SQLAlchemy==1.4.54
 SQLAlchemy-JSONField==1.0.2
 SQLAlchemy-Utils==0.41.2
 sqlparse==0.5.1
+sshtunnel==0.4.0
 stack-data==0.6.3
 tabulate==0.9.0
 tenacity==8.2.3
