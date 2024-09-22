@@ -26,4 +26,10 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 mkdir -p ./logs ./plugins ./config
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 
-sudo docker compose up airflow-init
+#sudo docker compose up airflow-init
+
+curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+source .bashrc
+yc init
+#yc config profile create airflow
+#yc config set folder-id b1gmi1gs1575jti9jgnl
