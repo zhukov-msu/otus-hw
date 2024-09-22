@@ -1,5 +1,13 @@
 # otus-hw
 
+## Решение задания 3 (preprocessing)
+
+* Запуск кластера: ```create_cluster.tf```
+* Ноутбук препроцессинга: ```notebooks/hw3_data_preprocessing.ipynb```
+* Запуск сабмита препроцессинга: ```spark-submit src/data_clean.py```
+* Итоговый бакет: ```s3:///hw3-data-cleaning```
+
+
 ## Решение задачния 3.5 (по Feast)
 
 ### Получившийся Фичестор
