@@ -16,7 +16,7 @@ def main():
         df = spark.read.schema(schema) \
             .option("comment", "#") \
             .option("header", False) \
-            .csv(f'{filename}.txt')
+            .csv(f'{hdfsdir}/{filename}.txt')
         df = clean_dataframe(df)
         # write to one parquet
         (
