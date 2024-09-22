@@ -5,13 +5,17 @@ from pyspark.sql import SparkSession
 from pyspark import SparkConf
 from pyspark.sql.types import *
 import boto3
+import pickle
 
 hdfsdir = '/user/data'
 target_S3 = 's3a://hw3-data-cleaning/'
 INPUT_BUCKET = "otus-hw-bucket"
 RESULT_BUCKET = "hw3-data-cleaning"
-KEY_ID = 'YCAJE62pSQELM4yc4RA3aXwM6'
-SECRET = 'YCPuHgoejE1VSMtfRcujfh1-ukaEYys-ObFOkztP'
+
+with open("bucket_cred.pkl", 'rb') as f:
+    d = pickle.load(f)
+    KEY_ID = d["KEY_ID"]
+    SECRET = d["SECRET"]
 
 
 def get_spark(app_name: str = "otus-hw"):
