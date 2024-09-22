@@ -28,3 +28,6 @@ activate.sh
 # airflow
 .env
 logs/
+.DS_Store
+__pycache__/
+terraform_log.txt

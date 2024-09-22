@@ -5,6 +5,7 @@ sudo apt install -y python3.8-venv
 git clone https://github.com/zhukov-msu/otus-hw.git && cd otus-hw
 python3 -m venv .venv
 source ./.venv/bin/activate
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 
 sudo apt-get update -y
@@ -22,7 +23,7 @@ sudo apt-get update -y
 
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-mkdir -p ./dags ./logs ./plugins ./config
+mkdir -p ./logs ./plugins ./config
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 
 sudo docker compose up airflow-init
