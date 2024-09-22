@@ -1,5 +1,5 @@
 import pyspark.sql.functions as F
-from ..tools import *
+from tools import *
 
 def clean_dataframe(df):
     df = df.na.drop("any")  # очистка пустых значений
