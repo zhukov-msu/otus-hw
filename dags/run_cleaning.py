@@ -7,6 +7,7 @@ from airflow.decorators import dag, task
 import pendulum
 from src.tools import *
 
+
 @dag(
     schedule='*/3 * * * *',
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),

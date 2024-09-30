@@ -8,7 +8,6 @@ from airflow.providers.yandex.operators.yandexcloud_dataproc import (
     DataprocCreateClusterOperator,
     DataprocCreatePysparkJobOperator,
     DataprocDeleteClusterOperator,
-
 )
 
 
