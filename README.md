@@ -1,5 +1,11 @@
 # otus-hw
 
+## Решение задания 4
+
+* **DAG** находится здесь: ```dags/run_data_clean.py```
+
+![Airflow](resources/airflow.png)
+
 ## Решение задания 3 (preprocessing)
 
 * Запуск кластера: ```create_cluster.tf```
@@ -7,12 +13,6 @@
 * Запуск сабмита препроцессинга: ```spark-submit src/data_clean.py```
 * Итоговый бакет: ```s3:///hw3-data-cleaning```
 
-
-## Решение задания 4
-
-* **DAG** находится здесь: ```dags/run_data_clean.py```
-
-![Airflow](resources/airflow.png)
 
 ## Решение задачния 3.5 (по Feast)
 
