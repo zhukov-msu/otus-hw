@@ -10,10 +10,9 @@
 
 ## Решение задания 4
 
+* **DAG** находится здесь: ```dags/run_data_clean.py```
+
 ![Airflow](resources/airflow.png)
-
-* DAG: ```dags/run_data_clean.py```
-
 
 ## Решение задачния 3.5 (по Feast)
 
