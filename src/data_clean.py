@@ -53,7 +53,7 @@ def main():
         df = spark.read.schema(schema) \
             .option("comment", "#") \
             .option("header", False) \
-            .csv(f's3a://{INPUT_BUCKET}/{filename}')
+            .csv(f's3a://{INPUT_BUCKET}/{filename}.txt')
             # .csv(f'{hdfsdir}/{filename}.txt')
         df = clean_dataframe(df)
         # write to one parquet
