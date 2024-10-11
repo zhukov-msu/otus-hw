@@ -13,8 +13,6 @@ def get_spark(app_name: str = "otus-hw"):
     # findspark.find()
     conf = (
         SparkConf().setMaster("yarn").setAppName(app_name)
-        .set("fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")
-        .set("fs.s3a.endpoint", "https://storage.yandexcloud.net")
         .set("spark.executor.memory", "6g")
         .set("spark.driver.memory", "4g")
         .set("spark.sql.execution.arrow.pyspark.enabled", "true")
