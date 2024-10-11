@@ -14,7 +14,7 @@ from airflow.providers.yandex.operators.yandexcloud_dataproc import (
 # Common settings for your environment
 YC_DP_FOLDER_ID = 'b1gmi1gs1575jti9jgnl'
 YC_DP_SUBNET_ID = 'e2lgptlk7i78hb4cbg9t'
-YC_DP_SA_ID = 'ajefni7geukda4acjobq'
+YC_DP_SA_ID = 'ajes9bbmqvjvmk5fr231'
 YC_DP_AZ = 'ru-central1-b'
 YC_DP_SSH_PUBLIC_KEY = Variable.get("SSH_PUBLIC")
 YC_DP_GROUP_ID = 'enphha44ggcm9402fruu'
