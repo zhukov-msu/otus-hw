@@ -8,6 +8,13 @@
 * Итоговый бакет: ```s3:///hw3-data-cleaning```
 
 
+## Решение задания 4
+
+![Airflow](resources/airlow.png)
+
+* DAG: ```dags/run_data_clean.py```
+
+
 ## Решение задачния 3.5 (по Feast)
 
 ### Получившийся Фичестор

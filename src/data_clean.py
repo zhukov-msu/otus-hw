@@ -1,5 +1,4 @@
-import pyspark.sql.functions as F
-import findspark
+# import findspark
 from pyspark.sql import SparkSession
 from pyspark import SparkConf
 from pyspark.sql.types import *
@@ -10,15 +9,19 @@ INPUT_BUCKET = "otus-hw-bucket"
 RESULT_BUCKET = "hw3-data-cleaning"
 
 def get_spark(app_name: str = "otus-hw"):
-    findspark.init()
-    findspark.find()
+    # findspark.init()
+    # findspark.find()
     conf = (
         SparkConf().setMaster("yarn").setAppName(app_name)
-        .set("spark.executor.memory", "8g")
+        .set("fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")
+        .set("fs.s3a.endpoint", "https://storage.yandexcloud.net")
+        .set("spark.executor.memory", "6g")
         .set("spark.driver.memory", "4g")
         .set("spark.sql.execution.arrow.pyspark.enabled", "true")
-        .set("spark.executor.instances", 4)
-        .set("spark.executor.cores", 2)
+        .set("spark.dynamicAllocation.enabled", "true")
+        .set("spark.executor.cores", "4")
+        .set("spark.dynamicAllocation.minExecutors", "1")
+        .set("spark.dynamicAllocation.maxExecutors", "2")
         .set('spark.sql.repl.eagerEval.enabled', True)
     )
     spark = SparkSession.builder.config(conf=conf).getOrCreate()
