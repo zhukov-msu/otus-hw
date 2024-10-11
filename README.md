@@ -10,7 +10,7 @@
 
 ## Решение задания 4
 
-![Airflow](resources/airlow.png)
+![Airflow](resources/airflow.png)
 
 * DAG: ```dags/run_data_clean.py```
 
