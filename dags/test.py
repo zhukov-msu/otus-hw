@@ -12,20 +12,18 @@ from airflow.providers.yandex.operators.yandexcloud_dataproc import (
 
 
 # Common settings for your environment
-YC_DP_FOLDER_ID = 'you-dataproc-folder-id'
-YC_DP_SUBNET_ID = 'you-dataproc-subnet-id'
-YC_DP_SA_ID = 'you-dataproc-service-accaunt-id'
+YC_DP_FOLDER_ID = 'b1gmi1gs1575jti9jgnl'
+YC_DP_SUBNET_ID = 'e2lgptlk7i78hb4cbg9t'
+YC_DP_SA_ID = 'ajefni7geukda4acjobq'
 YC_DP_AZ = 'ru-central1-b'
 YC_DP_SSH_PUBLIC_KEY = Variable.get("SSH_PUBLIC")
-YC_DP_GROUP_ID = 'you-dataproc-security-group-id'
+YC_DP_GROUP_ID = 'enphha44ggcm9402fruu'
 
 
 # Settings for S3 buckets
-YC_INPUT_DATA_BUCKET = 'you-s3-bucket-name/airflow/'  # YC S3 bucket for input data
-YC_SOURCE_BUCKET = 'you-s3-bucket-name'     # YC S3 bucket for pyspark source files
-YC_DP_LOGS_BUCKET = 'you-s3-bucket-name/airflow_logs/'      # YC S3 bucket for Data Proc cluster logs
-
-
+YC_INPUT_DATA_BUCKET = 'hw-bucket/airflow/'  # YC S3 bucket for input data
+YC_SOURCE_BUCKET = 'hw-bucket'     # YC S3 bucket for pyspark source files
+YC_DP_LOGS_BUCKET = 'hw-bucket/airflow_logs/'      # YC S3 bucket for Data Proc cluster logs
 
 # Создание подключения для Object Storage
 session = settings.Session()
