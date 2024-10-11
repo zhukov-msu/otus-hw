@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from airflow import DAG, settings
 from airflow.models import Connection, Variable
 from airflow.utils.trigger_rule import TriggerRule
-from airflow.operators.python import PythonOperator
 from airflow.providers.yandex.operators.yandexcloud_dataproc import (
     DataprocCreateClusterOperator,
     DataprocCreatePysparkJobOperator,
@@ -78,13 +77,13 @@ with DAG(
         zone=YC_DP_AZ,
         cluster_image_version='2.0.43',
         masternode_resource_preset='s3-c2-m8',
-        masternode_disk_type='network-ssd',
+        masternode_disk_type='network-hdd',
         masternode_disk_size=20,
         datanode_resource_preset='s3-c4-m16',
-        datanode_disk_type='network-ssd',
-        datanode_disk_size=60,
-        datanode_count=2,
-        services=['YARN', 'SPARK', 'HDFS', 'MAPREDUCE'],  
+        datanode_disk_type='network-hdd',
+        datanode_disk_size=20,
+        datanode_count=1,
+        services=['YARN', 'SPARK', 'HDFS', 'MAPREDUCE'],
         computenode_count=0,           
         connection_id=ycSA_connection.conn_id,
         dag=ingest_dag
@@ -93,7 +92,7 @@ with DAG(
     # 2 этап: запуск задания PySpark
     poke_spark_processing = DataprocCreatePysparkJobOperator(
         task_id='dp-cluster-pyspark-task',
-        main_python_file_uri=f's3a://{YC_SOURCE_BUCKET}/scripts/pyspark_script.py', # ваш скрипт, выполняющий очистку данных
+        main_python_file_uri=f's3a://{YC_SOURCE_BUCKET}/data_clean.py',
         connection_id = ycSA_connection.conn_id,
         dag=ingest_dag
     )
