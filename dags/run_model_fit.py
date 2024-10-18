@@ -11,7 +11,7 @@ with DAG(
     t1 = BashOperator(
         task_id = 'run_model_fit',
         bash_command = 'ssh -i /home/airflow/id_rsa ubuntu@10.1.0.27 \
-         "spark-submit /home/ubuntu/otus-hw/src/model.py"',
+         "spark-submit --jars /home/ubuntu/mlflow-spark-1.27.0.jar /home/ubuntu/otus-hw/src/model.py"',
         # run_as_user='ubuntu'
     )
 
