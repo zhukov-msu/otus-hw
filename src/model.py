@@ -85,6 +85,7 @@ def main():
 
 
     logger.info("Join df_fraud_transaction to df_validation")
+
     df_validation = df_validation.join(df_fraud_transaction, "terminal_id", "left")
 
     df = df_validation
@@ -109,14 +110,14 @@ def main():
     data = df_0.unionAll(df1Over)
 
     logger.info("StringIndexer, OneHotEncoder, VectorAssembler, MinMaxScaler")
-    data_indexer = StringIndexer(inputCols=["tx_fraud_scenario"],
-                                 outputCols=["PercFraudIndex", "FraudScenarioIndex"])
-    data_encoder = OneHotEncoder(inputCols=["PercFraudIndex", "FraudScenarioIndex"],
-                                 outputCols=["PercFraudEncoded", "FraudScenarioEncoded"])
+    # data_indexer = StringIndexer(inputCols=["tx_fraud_scenario"],
+    #                              outputCols=["PercFraudIndex", "FraudScenarioIndex"])
+    # data_encoder = OneHotEncoder(inputCols=["PercFraudIndex", "FraudScenarioIndex"],
+    #                              outputCols=["PercFraudEncoded", "FraudScenarioEncoded"])
 
-    numeric_cols = ["terminal_id", "hour_tx_datetime", "tx_amount"]
-    cat_cols = ["PercFraudEncoded", "FraudScenarioEncoded"]
-    featureColumns = numeric_cols + cat_cols
+    numeric_cols = ["terminal_id", "hour_tx_datetime", "tx_amount", "percent_fraud_on_terminal"]
+    # cat_cols = ["PercFraudEncoded", "FraudScenarioEncoded"]
+    featureColumns = numeric_cols #+ cat_cols
 
     assembler = VectorAssembler() \
         .setInputCols(featureColumns) \
@@ -130,8 +131,8 @@ def main():
     logger.info("Pipeline to data")
 
     scaled = Pipeline(stages=[
-        data_indexer,
-        data_encoder,
+        # data_indexer,
+        # data_encoder,
         assembler,
         scaler,
     ]).fit(data).transform(data)
