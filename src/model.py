@@ -42,7 +42,7 @@ def main():
     spark = get_spark()
 
     logger.info("Read parquet")
-    filename = "2019-11-20.parquet"
+    filename = "2019-09-21.parquet"
     df = spark.read.parquet(f's3a://{BUCKET}/{filename}')
 
     logger.info("Checking balance")
