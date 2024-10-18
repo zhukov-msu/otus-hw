@@ -1,5 +1,16 @@
 # otus-hw
 
+## Решение задания 5
+
+* **DAG** находится здесь: ```dags/run_model_fit.py```
+* **Обучение модели:** ```src/model.py```
+
+![Машины](resources/cars.png)
+
+![MLFlow](resources/mlflow.png)
+
+![Airflow](resources/airflow_mlflow.png)
+
 ## Решение задания 4
 
 * **DAG** находится здесь: ```dags/run_data_clean.py```
