@@ -29,17 +29,6 @@ logger = logging.getLogger()
 
 
 def main():
-    # spark = (
-    #     SparkSession
-    #     .builder
-    #     .appName("mlops")
-    #     .config("spark.dynamicAllocation.enabled", "true")
-    #     .config("spark.executor.cores", "2")
-    #     .config("spark.executor.memory", "2g")
-    #     .config("spark.executor.instances", "3")
-    #     .config("spark.default.parallelism", "24")
-    #     .getOrCreate()
-    # )
     spark = get_spark()
 
     logger.info("Read parquet")
@@ -89,7 +78,7 @@ def main():
     logger.info("column percent_fraud_on_terminal")
 
     df_fraud_transaction = df_fraud_transaction.withColumn("percent_fraud_on_terminal", f.round(
-        f.col('cnt_fraud_transactions_on_terminal_id') / col('cnt_transactions_on_terminal_id') * 100, 2))
+        f.col('cnt_fraud_transactions_on_terminal_id') / f.col('cnt_transactions_on_terminal_id') * 100, 2))
     df_fraud_transaction = df_fraud_transaction.withColumn('percent_fraud_on_terminal',
                                                            df_fraud_transaction['percent_fraud_on_terminal'].cast(
                                                                FloatType()))
