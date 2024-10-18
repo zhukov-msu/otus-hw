@@ -16,7 +16,7 @@
 
 ![S3](resources/s3.png)
 
-![Airflow](resources/airflow_mlflow.png)
+![Airflow](resources/airflow-mlflow.png)
 
 ## Решение задания 4
 
