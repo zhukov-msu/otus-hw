@@ -43,7 +43,7 @@ def main():
 
     logger.info("Read parquet")
     filename = "2019-11-20.parquet"
-    df = spark.read.parquet(f's3a://{BUCKET}/{filename}.txt')
+    df = spark.read.parquet(f's3a://{BUCKET}/{filename}')
 
     logger.info("Checking balance")
     df_1 = df.filter(df["tx_fraud"] == 1)
@@ -98,7 +98,7 @@ def main():
 
     logger.info("Mlflow is starting")
     os.environ["MLFLOW_S3_ENDPOINT_URL"] = "https://storage.yandexcloud.net"
-    mlflow.set_tracking_uri("http://http://158.160.2.210/:8000")
+    mlflow.set_tracking_uri("http://158.160.2.210:8000")
 
     experiment = mlflow.set_experiment("zhukov-test")
     experiment_id = experiment.experiment_id
