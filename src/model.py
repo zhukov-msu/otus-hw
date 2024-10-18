@@ -18,6 +18,7 @@ from pyspark.ml.feature import StringIndexer
 from pyspark.ml.feature import OneHotEncoder
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.pipeline import Pipeline
+from pyspark.sql.types import FloatType, IntegerType
 
 import mlflow
 from datetime import datetime
@@ -42,8 +43,63 @@ def main():
     spark = get_spark()
 
     logger.info("Read parquet")
-    filename = "2019-09-21.parquet"
-    df = spark.read.parquet(f's3a://{BUCKET}/{filename}')
+    file_name = "2019-09-21.parquet"
+    df = spark.read.parquet(f's3a://{BUCKET}/{file_name}')
+    df_validation = (
+        df
+        .filter(f.col("tx_amount") > 0)
+        .filter(f.col("customer_id") > 0)
+    )
+
+    logger.info(f"Starting remobe null from {file_name}")
+
+    logger.info(f"Changing column types {file_name}")
+    df_validation = df_validation.withColumn('tx_amount', df_validation['tx_amount'].cast(FloatType()))
+    df_validation = df_validation.withColumn('terminal_id', df_validation['terminal_id'].cast(IntegerType()))
+    df_validation = df_validation.withColumn('tx_fraud', df_validation['tx_fraud'].cast(IntegerType()))
+    df_validation = df_validation.withColumn("tx_datetime", f.to_timestamp("tx_datetime", 'yyyy-MM-dd HH:mm:ss'))
+    df_validation = df_validation.withColumn('hour_tx_datetime', f.hour(df_validation.tx_datetime))
+    df_validation = df_validation.withColumn("tx_datetime", f.from_unixtime(f.unix_timestamp(df_validation.tx_datetime),
+                                                                            'yyyy-MM-dd HH:mm:ss'))
+    logger.info("Generating a pecent fraud on terminal")
+
+    logger.info("df_cnt_transaction_on_terminal")
+    df_cnt_transaction_on_terminal = (
+        df_validation
+        .select("terminal_id")
+        .groupBy("terminal_id")
+        .count()
+        .withColumnRenamed("count", "cnt_transactions_on_terminal_id")
+    )
+
+    logger.info("df_cnt_fraud_transaction_on_terminal")
+    df_cnt_fraud_transaction_on_terminal = (
+        df_validation
+        .filter("tx_fraud = 1")
+        .select("terminal_id")
+        .groupBy("terminal_id")
+        .count()
+        .withColumnRenamed("count", "cnt_fraud_transactions_on_terminal_id")
+    )
+
+    logger.info("df_fraud_transaction")
+    df_fraud_transaction = df_cnt_transaction_on_terminal. \
+        join(df_cnt_fraud_transaction_on_terminal, "terminal_id", "left")
+
+    logger.info("column percent_fraud_on_terminal")
+
+    df_fraud_transaction = df_fraud_transaction.withColumn("percent_fraud_on_terminal", f.round(
+        f.col('cnt_fraud_transactions_on_terminal_id') / col('cnt_transactions_on_terminal_id') * 100, 2))
+    df_fraud_transaction = df_fraud_transaction.withColumn('percent_fraud_on_terminal',
+                                                           df_fraud_transaction['percent_fraud_on_terminal'].cast(
+                                                               FloatType()))
+
+
+    logger.info("Join df_fraud_transaction to df_validation")
+    df_validation = df_validation.join(df_fraud_transaction, "terminal_id", "left")
+
+    df = df_validation
+
 
     logger.info("Checking balance")
     df_1 = df.filter(df["tx_fraud"] == 1)
@@ -64,7 +120,7 @@ def main():
     data = df_0.unionAll(df1Over)
 
     logger.info("StringIndexer, OneHotEncoder, VectorAssembler, MinMaxScaler")
-    data_indexer = StringIndexer(inputCols=["percent_fraud_on_terminal_udf", "tx_fraud_scenario"],
+    data_indexer = StringIndexer(inputCols=["tx_fraud_scenario"],
                                  outputCols=["PercFraudIndex", "FraudScenarioIndex"])
     data_encoder = OneHotEncoder(inputCols=["PercFraudIndex", "FraudScenarioIndex"],
                                  outputCols=["PercFraudEncoded", "FraudScenarioEncoded"])
