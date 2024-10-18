@@ -9,6 +9,13 @@
 
 ![MLFlow](resources/mlflow.png)
 
+![MLFlow](resources/mlflow2.png)
+![MLFlow](resources/mlflow3.png)
+![MLFlow](resources/mlflow4.png)
+![MLFlow](resources/mlflow5.png)
+
+![S3](resources/s3.png)
+
 ![Airflow](resources/airflow_mlflow.png)
 
 ## Решение задания 4
