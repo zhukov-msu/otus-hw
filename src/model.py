@@ -9,13 +9,9 @@ hdfsdir = '/user/data'
 S3_URL = 's3a://hw3-data-cleaning/'
 BUCKET = "hw3-data-cleaning"
 
-# import findspark
-from pyspark.sql import SparkSession
 import pyspark.sql.functions as f
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.feature import MinMaxScaler
-from pyspark.ml.feature import StringIndexer
-from pyspark.ml.feature import OneHotEncoder
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.pipeline import Pipeline
 from pyspark.sql.types import FloatType, IntegerType
@@ -109,14 +105,9 @@ def main():
     logger.info("Union all to data")
     data = df_0.unionAll(df1Over)
 
-    logger.info("StringIndexer, OneHotEncoder, VectorAssembler, MinMaxScaler")
-    # data_indexer = StringIndexer(inputCols=["tx_fraud_scenario"],
-    #                              outputCols=["PercFraudIndex", "FraudScenarioIndex"])
-    # data_encoder = OneHotEncoder(inputCols=["PercFraudIndex", "FraudScenarioIndex"],
-    #                              outputCols=["PercFraudEncoded", "FraudScenarioEncoded"])
+    logger.info("VectorAssembler, MinMaxScaler")
 
     numeric_cols = ["terminal_id", "hour_tx_datetime", "tx_amount", "percent_fraud_on_terminal"]
-    # cat_cols = ["PercFraudEncoded", "FraudScenarioEncoded"]
     featureColumns = numeric_cols #+ cat_cols
 
     assembler = VectorAssembler() \
@@ -131,8 +122,6 @@ def main():
     logger.info("Pipeline to data")
 
     scaled = Pipeline(stages=[
-        # data_indexer,
-        # data_encoder,
         assembler,
         scaler,
     ]).fit(data).transform(data)
