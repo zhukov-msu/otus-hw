@@ -11,6 +11,7 @@ experiment_id = experiment.experiment_id
 # logger.info(f"Experiment ID: {experiment_id}")
 client = MlflowClient(tracking_uri="http://130.193.53.137:8000")
 runs = client.search_runs([experiment_id], max_results=1)
+print(runs)
 if len(runs) < 2:
     is_first = True
 else:
