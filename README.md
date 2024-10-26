@@ -5,7 +5,8 @@
 * **DAG** находится здесь: ```dags/run_model_fit.py```. В нем мало что обновилось, т.к. я просто встроил в тот же submit ab-test 
 * **Обучение модели:** ```src/model.py``` - добавлено бутстрапирование выборки, сравнение и логгирование метрики roc-auc, вычисление и логгирование p-value
 
-![MLFlow](resources/mlflow-ab.png)
+![MLFlow - ROC](resources/roc-auc.png)
+![MLFlow - p-value](resources/p-value.png)
 
 ## Решение задания 5
 
