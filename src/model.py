@@ -261,7 +261,7 @@ def main():
                 # If the new mean is significantly higher than the previous one, save the model
                 alpha = 0.05
                 if pvalue < alpha:
-                    mlflow.spark.log_model(model, "hometask_6_model")
+                    mlflow.spark.log_model(model, "LrModelLogs")
 
     spark.stop()
 
