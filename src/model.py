@@ -243,7 +243,7 @@ def main():
 
         logger.info("Check previous runs")
         client = MlflowClient(tracking_uri="http://130.193.53.137:8000")
-        if len(client.search_runs([experiment_id], max_results=1)) < 2:
+        if len(client.search_runs([experiment_id], max_results=1)) < 1:
             is_first = True
         else:
             is_first = False
