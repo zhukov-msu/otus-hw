@@ -28,7 +28,7 @@ logger = logging.getLogger()
 from scipy.stats import shapiro
 from scipy.stats import ttest_ind
 
-BOOTSTRAP_ITERATIONS = 10
+BOOTSTRAP_ITERATIONS = 3
 
 
 def compare_distributions(scores_init, scores_tuned, alpha=0.05):
