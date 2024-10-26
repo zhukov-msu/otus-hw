@@ -8,6 +8,7 @@ os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 hdfsdir = '/user/data'
 S3_URL = 's3a://hw3-data-cleaning/'
 BUCKET = "hw3-data-cleaning"
+mlflow_uri = "http://130.193.53.137:8000"
 
 import pyspark.sql.functions as f
 from pyspark.ml.feature import VectorAssembler
@@ -58,7 +59,7 @@ def main():
     spark = get_spark()
 
     logger.info("Read parquet")
-    file_name = "2019-09-21.parquet"
+    file_name = "2019-08-22.parquet"
     df = spark.read.parquet(f's3a://{BUCKET}/{file_name}').limit(20000)
     df_validation = (
         df
@@ -165,7 +166,7 @@ def main():
 
     logger.info("Mlflow is starting")
     os.environ["MLFLOW_S3_ENDPOINT_URL"] = "https://storage.yandexcloud.net"
-    mlflow.set_tracking_uri("http://130.193.53.137:8000")
+    mlflow.set_tracking_uri(mlflow_uri)
 
     experiment = mlflow.set_experiment("zhukov-test")
     experiment_id = experiment.experiment_id
@@ -242,7 +243,7 @@ def main():
         mlflow.log_metric("roc_auc_mean", roc_auc_mean)
 
         logger.info("Check previous runs")
-        client = MlflowClient(tracking_uri="http://130.193.53.137:8000")
+        client = MlflowClient(tracking_uri=mlflow_uri)
         if len(client.search_runs([experiment_id], max_results=1)) < 1:
             is_first = True
         else:
@@ -255,21 +256,21 @@ def main():
         if is_first:
             mlflow.spark.log_model(model, "LrModelLogs")
         else:
-            if roc_auc_mean > best_run.data.metrics.get("roc_auc_mean", 0):
-                best_run_id = best_run.info.run_id
-                best_metrics = []
+            # if roc_auc_mean > best_run.data.metrics.get("roc_auc_mean", 0):
+            best_run_id = best_run.info.run_id
+            best_metrics = []
 
-                for best_metric in client.get_metric_history(best_run_id, "roc_auc"):
-                    best_metrics.append(best_metric.value)
+            for best_metric in client.get_metric_history(best_run_id, "roc_auc"):
+                best_metrics.append(best_metric.value)
 
-                pvalue = ttest_ind(best_metrics, current_metrics).pvalue
-                mlflow.log_metric("p-value", pvalue)
-                logger.info(f"p-value: {pvalue}")
+            pvalue = ttest_ind(best_metrics, current_metrics).pvalue
+            mlflow.log_metric("p-value", pvalue)
+            logger.info(f"p-value: {pvalue}")
 
-                # If the new mean is significantly higher than the previous one, save the model
-                alpha = 0.05
-                if pvalue < alpha:
-                    mlflow.spark.log_model(model, "LrModelLogs")
+            # If the new mean is significantly higher than the previous one, save the model
+            alpha = 0.05
+            if pvalue < alpha:
+                mlflow.spark.log_model(model, "LrModelLogs")
 
     spark.stop()
 
