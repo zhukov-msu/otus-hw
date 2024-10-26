@@ -29,31 +29,7 @@ logger = logging.getLogger()
 from scipy.stats import shapiro
 from scipy.stats import ttest_ind
 
-BOOTSTRAP_ITERATIONS = 3
-
-
-def compare_distributions(scores_init, scores_tuned, alpha=0.05):
-    pvalue = ttest_ind(scores_init, scores_tuned).pvalue
-    if pvalue < alpha:
-        result = "dist_DIFFERENT"
-    else:
-        result = "dist_IDENTICAL"
-    return pvalue, result
-
-def validate_model(
-    predictions,
-    evaluator,
-    N_BOOTSTREPS=100,
-    SAMPLE_SIZE=0.01,
-):
-    scores = []
-    for i in range(N_BOOTSTREPS):
-        sample = predictions.sample(SAMPLE_SIZE)
-        areaUnderROC = evaluator.evaluate(sample)
-        scores.append(areaUnderROC)
-    stat, p = shapiro(scores)
-    return scores, stat, p
-
+BOOTSTRAP_ITERATIONS = 10
 
 def main():
     spark = get_spark()
