@@ -169,6 +169,7 @@ def main():
 
     experiment = mlflow.set_experiment("zhukov-test")
     experiment_id = experiment.experiment_id
+    logger.info(f"Experiment ID: {experiment_id}")
 
     run_name = 'LogReg' + str(datetime.now())
 
@@ -247,6 +248,8 @@ def main():
         else:
             is_first = False
             best_run = client.search_runs(experiment_id, order_by=["metrics.roc_auc_mean DESC"], max_results=1)[0]
+
+        logger.info(f"is_first: {is_first}")
 
         logger.info("log metrics to MLFlow")
         if is_first:
