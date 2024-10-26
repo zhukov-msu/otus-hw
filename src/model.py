@@ -163,7 +163,7 @@ def main():
 
     logger.info("Mlflow is starting")
     os.environ["MLFLOW_S3_ENDPOINT_URL"] = "https://storage.yandexcloud.net"
-    mlflow.set_tracking_uri("http://158.160.2.210:8000")
+    mlflow.set_tracking_uri("http://130.193.53.137:8000")
 
     experiment = mlflow.set_experiment("zhukov-test")
     experiment_id = experiment.experiment_id
