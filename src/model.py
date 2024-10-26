@@ -58,7 +58,7 @@ def main():
     spark = get_spark()
 
     logger.info("Read parquet")
-    file_name = "2019-08-22.parquet"
+    file_name = "2019-09-21.parquet"
     df = spark.read.parquet(f's3a://{BUCKET}/{file_name}')
     df_validation = (
         df
