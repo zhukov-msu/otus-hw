@@ -15,3 +15,6 @@ if len(client.search_runs(experiment_id, max_results=1)) < 2:
 else:
     is_first = False
     best_run = client.search_runs(experiment_id, order_by=["metrics.roc_auc_mean DESC"], max_results=1)[0]
+    print(best_run)
+print(is_first)
+
