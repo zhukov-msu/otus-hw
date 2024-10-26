@@ -58,13 +58,13 @@ def main():
     spark = get_spark()
 
     logger.info("Read parquet")
-    file_name = "2019-09-21.parquet"
+    file_name = "2019-09-22.parquet"
     df = spark.read.parquet(f's3a://{BUCKET}/{file_name}')
     df_validation = (
         df
         .filter(f.col("tx_amount") > 0)
         .filter(f.col("customer_id") > 0)
-    )
+    ).limit(10000)
 
     logger.info(f"Starting remobe null from {file_name}")
 
@@ -168,7 +168,7 @@ def main():
     experiment = mlflow.set_experiment("zhukov-test")
     experiment_id = experiment.experiment_id
 
-    run_name = 'My run name' + 'LogReg' + str(datetime.now())
+    run_name = 'LogReg' + str(datetime.now())
 
     with mlflow.start_run(run_name=run_name, experiment_id=experiment_id):
         setRegParam = 0.2
@@ -224,6 +224,7 @@ def main():
         evaluator = BinaryClassificationEvaluator(labelCol="tx_fraud")
 
         # Running bootstrap samples evaluation
+        logger.info("Evaluator is starting")
         for _ in range(BOOTSTRAP_ITERATIONS):
             sample = predictions.sample(withReplacement=True, fraction=0.2, seed=42)
             roc_auc = evaluator.evaluate(sample)
@@ -231,10 +232,13 @@ def main():
             mlflow.log_metric("roc_auc", roc_auc)
             current_metrics.append(roc_auc)
 
+        logger.info("Evaluator is finished")
+
         # Mean of metrics
         roc_auc_mean = sum(current_metrics) / len(current_metrics)
         mlflow.log_metric("roc_auc_mean", roc_auc_mean)
 
+        logger.info("Check previous runs")
         client = MlflowClient()
         if len(client.search_runs(experiment_id, max_results=1)) < 2:
             is_first = True
@@ -242,11 +246,9 @@ def main():
             is_first = False
             best_run = client.search_runs(experiment_id, order_by=["metrics.roc_auc_mean DESC"], max_results=1)[0]
 
-        # If it's the first run then just save the model
+        logger.info("log metrics to MLFlow")
         if is_first:
             mlflow.spark.log_model(model, "LrModelLogs")
-        # If it's not, and the mean is higher than in the best run so far, then do 2-samples independent t-test
-        # to check if the change is significant
         else:
             if roc_auc_mean > best_run.data.metrics.get("roc_auc_mean", 0):
                 best_run_id = best_run.info.run_id
@@ -257,6 +259,7 @@ def main():
 
                 pvalue = ttest_ind(best_metrics, current_metrics).pvalue
                 mlflow.log_metric("p-value", pvalue)
+                logger.info(f"p-value: {pvalue}")
 
                 # If the new mean is significantly higher than the previous one, save the model
                 alpha = 0.05
