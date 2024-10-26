@@ -59,12 +59,12 @@ def main():
 
     logger.info("Read parquet")
     file_name = "2019-09-21.parquet"
-    df = spark.read.parquet(f's3a://{BUCKET}/{file_name}')
+    df = spark.read.parquet(f's3a://{BUCKET}/{file_name}').limit(20000)
     df_validation = (
         df
         .filter(f.col("tx_amount") > 0)
         .filter(f.col("customer_id") > 0)
-    ).limit(10000)
+    )
 
     logger.info(f"Starting remobe null from {file_name}")
 
@@ -123,6 +123,8 @@ def main():
 
     df_1count = df_1.count()
     df_0count = df_0.count()
+    logger.info(f"df_1count: {df_1count}")
+    logger.info(f"df_0count: {df_0count}")
 
     logger.info("Balancing samples by tx_fraud")
     df1Over = df_1 \
