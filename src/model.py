@@ -242,8 +242,8 @@ def main():
         mlflow.log_metric("roc_auc_mean", roc_auc_mean)
 
         logger.info("Check previous runs")
-        client = MlflowClient()
-        if len(client.search_runs(experiment_id, max_results=1)) < 2:
+        client = MlflowClient(tracking_uri="http://130.193.53.137:8000")
+        if len(client.search_runs([experiment_id], max_results=1)) < 2:
             is_first = True
         else:
             is_first = False

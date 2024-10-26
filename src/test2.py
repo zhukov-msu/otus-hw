@@ -10,7 +10,7 @@ experiment = mlflow.set_experiment("zhukov-test")
 experiment_id = experiment.experiment_id
 # logger.info(f"Experiment ID: {experiment_id}")
 client = MlflowClient(tracking_uri="http://130.193.53.137:8000")
-if len(client.search_runs(experiment_id, max_results=1)) < 2:
+if len(client.search_runs([experiment_id], max_results=1)) < 2:
     is_first = True
 else:
     is_first = False
