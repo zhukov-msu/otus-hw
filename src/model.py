@@ -15,6 +15,8 @@ from pyspark.ml.feature import MinMaxScaler
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.pipeline import Pipeline
 from pyspark.sql.types import FloatType, IntegerType
+from pyspark.ml.evaluation import BinaryClassificationEvaluator
+from mlflow.tracking import MlflowClient
 
 import mlflow
 from datetime import datetime
@@ -22,6 +24,34 @@ from data_clean import get_schema, get_spark
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
+
+from scipy.stats import shapiro
+from scipy.stats import ttest_ind
+
+BOOTSTRAP_ITERATIONS = 10
+
+
+def compare_distributions(scores_init, scores_tuned, alpha=0.05):
+    pvalue = ttest_ind(scores_init, scores_tuned).pvalue
+    if pvalue < alpha:
+        result = "dist_DIFFERENT"
+    else:
+        result = "dist_IDENTICAL"
+    return pvalue, result
+
+def validate_model(
+    predictions,
+    evaluator,
+    N_BOOTSTREPS=100,
+    SAMPLE_SIZE=0.01,
+):
+    scores = []
+    for i in range(N_BOOTSTREPS):
+        sample = predictions.sample(SAMPLE_SIZE)
+        areaUnderROC = evaluator.evaluate(sample)
+        scores.append(areaUnderROC)
+    stat, p = shapiro(scores)
+    return scores, stat, p
 
 
 def main():
@@ -153,7 +183,7 @@ def main():
             .setFeaturesCol("scaledFeatures") \
             .setLabelCol("tx_fraud")
 
-        lrModel = lr.fit(training)
+        model = lr.fit(training)
 
         run_id = mlflow.active_run().info.run_id
 
@@ -161,35 +191,77 @@ def main():
         mlflow.log_param('optimal_elasticNetParam', setElasticNetParam)
 
         logger.info("Training is starting")
-        trainingSummary = lrModel.summary
+        trainingSummary = model.summary
         accuracy_trainingSummary = trainingSummary.accuracy
         areaUnderROC_trainingSummary = trainingSummary.areaUnderROC
 
         mlflow.log_metric("accuracy_trainingSummary", accuracy_trainingSummary)
         mlflow.log_metric("areaUnderROC_trainingSummary", areaUnderROC_trainingSummary)
 
-        logger.info("Predicted is starting")
-        predicted = lrModel.transform(test)
+        # logger.info("tp, tn, fp, fn")
+        # predicted = model.transform(test)
+        # tp = predicted.filter((f.col("tx_fraud") == 1) & (f.col("prediction") == 1)).count()
+        # tn = predicted.filter((f.col("tx_fraud") == 0) & (f.col("prediction") == 0)).count()
+        # fp = predicted.filter((f.col("tx_fraud") == 0) & (f.col("prediction") == 1)).count()
+        # fn = predicted.filter((f.col("tx_fraud") == 1) & (f.col("prediction") == 0)).count()
+        #
+        # logger.info("accuracy, precision, recall, Fmeasure")
+        # accuracy = (tp + tn) / (tp + tn + fp + fn)
+        # precision = tp / (tp + fp)
+        # recall = tp / (tp + fn)
+        # Fmeasure = 2 * recall * precision / (recall + precision)
+        #
+        # mlflow.log_metric("accuracy", accuracy)
+        # mlflow.log_metric("precision", precision)
+        # mlflow.log_metric("recall", recall)
+        # mlflow.log_metric("Fmeasure", Fmeasure)
 
-        logger.info("tp, tn, fp, fn")
-        tp = predicted.filter((f.col("tx_fraud") == 1) & (f.col("prediction") == 1)).count()
-        tn = predicted.filter((f.col("tx_fraud") == 0) & (f.col("prediction") == 0)).count()
-        fp = predicted.filter((f.col("tx_fraud") == 0) & (f.col("prediction") == 1)).count()
-        fn = predicted.filter((f.col("tx_fraud") == 1) & (f.col("prediction") == 0)).count()
+        mlflow.spark.save_model(model, "LrModelSaved")
+        # mlflow.spark.log_model(model, "LrModelLogs")
 
-        logger.info("accuracy, precision, recall, Fmeasure")
-        accuracy = (tp + tn) / (tp + tn + fp + fn)
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
-        Fmeasure = 2 * recall * precision / (recall + precision)
+        predictions = model.transform(test)
+        current_metrics = []
+        evaluator = BinaryClassificationEvaluator(labelCol="tx_fraud")
 
-        mlflow.log_metric("accuracy", accuracy)
-        mlflow.log_metric("precision", precision)
-        mlflow.log_metric("recall", recall)
-        mlflow.log_metric("Fmeasure", Fmeasure)
+        # Running bootstrap samples evaluation
+        for _ in range(BOOTSTRAP_ITERATIONS):
+            sample = predictions.sample(withReplacement=True, fraction=0.2, seed=42)
+            roc_auc = evaluator.evaluate(sample)
 
-        mlflow.spark.save_model(lrModel, "LrModelSaved")
-        mlflow.spark.log_model(lrModel, "LrModelLogs")
+            mlflow.log_metric("roc_auc", roc_auc)
+            current_metrics.append(roc_auc)
+
+        # Mean of metrics
+        roc_auc_mean = sum(current_metrics) / len(current_metrics)
+        mlflow.log_metric("roc_auc_mean", roc_auc_mean)
+
+        client = MlflowClient()
+        if len(client.search_runs(experiment_id, max_results=1)) < 2:
+            is_first = True
+        else:
+            is_first = False
+            best_run = client.search_runs(experiment_id, order_by=["metrics.roc_auc_mean DESC"], max_results=1)[0]
+
+        # If it's the first run then just save the model
+        if is_first:
+            mlflow.spark.log_model(model, "LrModelLogs")
+        # If it's not, and the mean is higher than in the best run so far, then do 2-samples independent t-test
+        # to check if the change is significant
+        else:
+            if roc_auc_mean > best_run.data.metrics.get("roc_auc_mean", 0):
+                best_run_id = best_run.info.run_id
+                best_metrics = []
+
+                for best_metric in client.get_metric_history(best_run_id, "roc_auc"):
+                    best_metrics.append(best_metric.value)
+
+                pvalue = ttest_ind(best_metrics, current_metrics).pvalue
+                mlflow.log_metric("p-value", pvalue)
+
+                # If the new mean is significantly higher than the previous one, save the model
+                alpha = 0.05
+                if pvalue < alpha:
+                    mlflow.spark.log_model(model, "hometask_6_model")
 
     spark.stop()
 
