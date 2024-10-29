@@ -41,6 +41,7 @@ jobs:
 #          pip install -e .
       - name: Unit tests with pytest
         run: |
+          pip install pytest-cov
           pytest --cov=src tests
 
 #  build:
