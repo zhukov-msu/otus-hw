@@ -29,12 +29,11 @@ env:
 
 jobs:
   build:
-    needs: lint
     runs-on: ubuntu-latest
     steps:
-#    - uses: actions/checkout@v2
-#    - name: Checkout repository
-#      run: ls -la
+    - uses: actions/checkout@v2
+    - name: Checkout repository
+      run: ls -la
     - name: Build Docker image
       run: docker build -t ${{ env.IMAGE_NAME }} .
     - name: Login to Docker Hub
