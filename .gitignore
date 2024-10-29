@@ -31,3 +31,4 @@ logs/
 .DS_Store
 __pycache__/
 terraform_log.txt
+/venv.tar.gz
