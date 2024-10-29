@@ -1,6 +1,6 @@
+import logging
 import os
 import sys
-import logging
 
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
@@ -8,7 +8,7 @@ os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 hdfsdir = '/user/data'
 S3_URL = 's3a://hw3-data-cleaning/'
 BUCKET = "hw3-data-cleaning"
-mlflow_uri = "http://130.193.53.137:8000"
+mlflow_uri = "http://89.169.164.14:8000"
 
 import pyspark.sql.functions as f
 from pyspark.ml.feature import VectorAssembler
@@ -21,15 +21,14 @@ from mlflow.tracking import MlflowClient
 
 import mlflow
 from datetime import datetime
-from data_clean import get_schema, get_spark
+from data_clean import get_spark
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
-from scipy.stats import shapiro
 from scipy.stats import ttest_ind
 
-BOOTSTRAP_ITERATIONS = 10
+BOOTSTRAP_ITERATIONS = 5
 
 def main():
     spark = get_spark()
@@ -164,6 +163,11 @@ def main():
             .setLabelCol("tx_fraud")
 
         model = lr.fit(training)
+
+        logger.info("Save to pickle")
+        import pickle
+        with open("model.pkl", "wb") as f_:
+            pickle.dump(model, f_)
 
         run_id = mlflow.active_run().info.run_id
 

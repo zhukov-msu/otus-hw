@@ -45,11 +45,11 @@ resource "yandex_dataproc_cluster" "hw-cluster-2" {
       resources {
         resource_preset_id = "s3-c4-m16"
         disk_type_id       = "network-hdd"
-        disk_size          = 60
+        disk_size          = 30
       }
 #       subnet_id   = "default-ru-central1-a"
       subnet_id   =  yandex_vpc_subnet.hw_subnet.id
-      hosts_count = 2
+      hosts_count = 1
     }
   }
 }

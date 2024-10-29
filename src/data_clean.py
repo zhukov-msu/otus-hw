@@ -1,6 +1,6 @@
 # import findspark
-from pyspark.sql import SparkSession
 from pyspark import SparkConf
+from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 
 hdfsdir = '/user/data'
@@ -12,15 +12,16 @@ def get_spark(app_name: str = "otus-hw"):
     # findspark.init()
     # findspark.find()
     conf = (
-        SparkConf().setMaster("yarn").setAppName(app_name)
-        .set("spark.executor.memory", "6g")
-        .set("spark.driver.memory", "4g")
-        .set("spark.sql.execution.arrow.pyspark.enabled", "true")
-        .set("spark.dynamicAllocation.enabled", "true")
-        .set("spark.executor.cores", "4")
-        .set("spark.dynamicAllocation.minExecutors", "1")
-        .set("spark.dynamicAllocation.maxExecutors", "2")
-        .set('spark.sql.repl.eagerEval.enabled', True)
+        SparkConf().setAppName(app_name)
+        # .setMaster("yarn")
+        # .set("spark.executor.memory", "6g")
+        # .set("spark.driver.memory", "4g")
+        # .set("spark.sql.execution.arrow.pyspark.enabled", "true")
+        # .set("spark.dynamicAllocation.enabled", "true")
+        # .set("spark.executor.cores", "4")
+        # .set("spark.dynamicAllocation.minExecutors", "1")
+        # .set("spark.dynamicAllocation.maxExecutors", "4")
+        # .set('spark.sql.repl.eagerEval.enabled', True)
     )
     spark = SparkSession.builder.config(conf=conf).getOrCreate()
     return spark
