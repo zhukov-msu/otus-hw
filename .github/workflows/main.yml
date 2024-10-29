@@ -23,26 +23,41 @@ env:
   SERVER_HOST: ${{ secrets.SERVER_HOST }}
   SERVER_USER: ${{ secrets.SERVER_USER }}
   SERVER_SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  PYTHON_VERSION: '3.x'
-  LINTERS: 'ruff'
-  LINTER_CMD: 'ruff check src'
+
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Checkout repository
-      run: ls -la
-    - name: Build Docker image
-      run: docker build -t ${{ env.IMAGE_NAME }} .
-    - name: Login to Docker Hub
-      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-      with:
-        username: ${{ env.DOCKER_HUB_USER }}
-        password: ${{ env.DOCKER_HUB_ACCESS_TOKEN }}
-    - name: Push image to Docker Hub
-      run: docker push ${{ env.IMAGE_NAME }}
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+      - name: Unit tests with pytest
+        run: |
+          pytest --cov=src tests
+
+#  build:
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/checkout@v4
+#    - name: Checkout repository
+#      run: ls -la
+#    - name: Build Docker image
+#      run: docker build -t ${{ env.IMAGE_NAME }} .
+#    - name: Login to Docker Hub
+#      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+#      with:
+#        username: ${{ env.DOCKER_HUB_USER }}
+#        password: ${{ env.DOCKER_HUB_ACCESS_TOKEN }}
+#    - name: Push image to Docker Hub
+#      run: docker push ${{ env.IMAGE_NAME }}
 #
 #  deploy:
 #    needs: build
