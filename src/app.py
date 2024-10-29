@@ -1,9 +1,10 @@
 """App"""
 
-import joblib
 from fastapi import FastAPI
 from pydantic import BaseModel
+from pyspark.ml.classification import LogisticRegressionModel
 from pyspark.ml.linalg import Vectors
+
 
 class Transaction(BaseModel):
     tranaction_id: int
@@ -16,7 +17,7 @@ class Transaction(BaseModel):
 
 
 app = FastAPI()
-model = joblib.load("hw_models/model.pkl")
+model = LogisticRegressionModel.load("lr.model")
 # app.add_route("/predict", predict)
 
 

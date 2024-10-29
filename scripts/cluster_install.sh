@@ -10,3 +10,4 @@ nohup jupyter notebook --no-browser --port=9999 > jup.log &
 hdfs dfs -mkdir /user/data
 hadoop distcp s3a://otus-hw-bucket/* hdfs:///user/data
 sudo apt-get install -y s3cmd
+pip install -U requests mlflow urllib3 botocore boto3

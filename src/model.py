@@ -165,9 +165,7 @@ def main():
         model = lr.fit(training)
 
         logger.info("Save to pickle")
-        import pickle
-        with open("model.pkl", "wb") as f_:
-            pickle.dump(model, f_)
+        model.save("lr.model")
 
         run_id = mlflow.active_run().info.run_id
 
