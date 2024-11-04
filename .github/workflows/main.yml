@@ -42,7 +42,7 @@ jobs:
       - name: Unit tests with pytest
         run: |
           pip install pytest-cov
-          pytest --cov=src tests
+          pytest tests
 
 #  build:
 #    runs-on: ubuntu-latest
