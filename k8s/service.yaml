@@ -11,5 +11,5 @@ spec:
   ports:
     - name: predictor
       protocol: TCP
-      port: 8000
+      port: 8890
   

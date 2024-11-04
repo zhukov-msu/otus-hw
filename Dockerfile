@@ -1,4 +1,4 @@
-FROM python:3.8.10-slim-buster
+FROM python:3.10-slim-buster
 LABEL authors="a.zhukov"
 
 ENV APP_HOME=/app
@@ -9,11 +9,12 @@ ENV PYTHONPATH=$APP_HOME
 COPY requirements.txt .
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install -r requirements.txt
+RUN pip install fastapi numpy uvicorn scikit-learn
+#RUN pip install -r requirements.txt
+
 
 COPY scripts scripts
 RUN chmod +x scripts/*.sh
-
 COPY src src
 
 EXPOSE 8890

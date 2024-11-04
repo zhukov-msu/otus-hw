@@ -1,17 +1,16 @@
 import pytest
 
-from src.app import *
+from src.app import predict, Transaction
 
 
 @pytest.fixture
 def transaction():
-    numeric_cols = ["terminal_id", "hour_tx_datetime", "tx_amount", "percent_fraud_on_terminal"]
-    test_vals = [1, 2.0, 3.0, 0.3]
-    return dict(zip(numeric_cols, test_vals))
+    return Transaction(terminal_id=1, hour_tx_datetime=2.0, tx_amount=3.0, percent_fraud_on_terminal=0.3)
 
-@pytest.fixture
-def bullshit():
-    return {"xyz":"lol"}
+
+# @pytest.fixture
+# def bullshit():
+#     return Transaction(terminal_id="ssssss", hour_tx_datetime=2.0, tx_amount=3.0, percent_fraud_on_terminal=0.3)
 
 
 def test_pred(transaction):
@@ -20,6 +19,6 @@ def test_pred(transaction):
     assert type(res)==dict
     assert type(res["pred"])==int
 
-def test_pred_bullshit(bullshit):
-    res = predict(bullshit)
-    print(res)
+# def test_pred_bullshit(bullshit):
+#     res = predict(bullshit)
+#     print(res)

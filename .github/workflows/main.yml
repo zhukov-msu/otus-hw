@@ -40,7 +40,6 @@ jobs:
           pip install -r requirements.txt
 #          pip install -e .
       - name: Unit tests with pytest
-        working-directory: ./src
         run:
           pytest tests.py
 
