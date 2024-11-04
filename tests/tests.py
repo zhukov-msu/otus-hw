@@ -14,13 +14,12 @@ def bullshit():
     return {"xyz":"lol"}
 
 
-class TestApp:
-    def test_pred(self, transaction):
-        res = predict(transaction)
-        print(res)
-        assert type(res)==dict
-        assert type(res["pred"])==int
+def test_pred(transaction):
+    res = predict(transaction)
+    print(res)
+    assert type(res)==dict
+    assert type(res["pred"])==int
 
-    def test_pred_bullshit(self, bullshit):
-        res = predict(bullshit)
-        print(res)
+def test_pred_bullshit(bullshit):
+    res = predict(bullshit)
+    print(res)
