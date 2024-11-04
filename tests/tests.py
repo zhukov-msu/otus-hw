@@ -1,6 +1,6 @@
 import pytest
 
-from src.app import predict
+from src.app import *
 
 
 @pytest.fixture
