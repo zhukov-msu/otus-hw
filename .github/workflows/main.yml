@@ -41,7 +41,8 @@ jobs:
 #          pip install -e .
       - name: Unit tests with pytest
         run:
-          pytest tests
+          cd src
+          pytest tests.py
 
 #  build:
 #    runs-on: ubuntu-latest

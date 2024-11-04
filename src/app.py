@@ -29,7 +29,7 @@ spark = SparkSession.builder.config(conf=conf).getOrCreate()
 
 
 app = FastAPI()
-model = LogisticRegressionModel.load("../lr.model")
+model = LogisticRegressionModel.load("./lr.model")
 # app.add_route("/predict", predict)
 
 
