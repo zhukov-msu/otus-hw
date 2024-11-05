@@ -61,19 +61,3 @@ jobs:
         password: ${{ env.DOCKER_HUB_ACCESS_TOKEN }}
     - name: Push image to Docker Hub
       run: docker push ${{ env.IMAGE_NAME }}
-#
-#  deploy:
-#    needs: build
-#    runs-on: ubuntu-latest
-#    steps:
-#    - name: Deploy to server
-#      uses: appleboy/ssh-action@master
-#      with:
-#        host: ${{ env.SERVER_HOST }}
-#        username: ${{ env.SERVER_USER }}
-#        key: ${{ env.SERVER_SSH_PRIVATE_KEY }}
-#        script: |
-#          docker pull ${{ env.IMAGE_NAME }}
-#          docker stop ${{ env.CONTAINER_NAME }} || true
-#          docker rm ${{ env.CONTAINER_NAME }} || true
-#          docker run -d -p 8890:8890 --name ${{ env.CONTAINER_NAME }} ${{ env.IMAGE_NAME }}

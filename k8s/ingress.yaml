@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: predictor-ingress
+  name: nginx
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -15,4 +15,4 @@ spec:
           service:
             name: predictor-service
             port:
-              number: 80
+              number: 8890

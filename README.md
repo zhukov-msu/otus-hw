@@ -1,5 +1,19 @@
 # otus-hw
 
+## Решение задания 9 - (обновление моделей, 37 урок)
+
+* Приложение на fast api: ```src/app.py```
+* Конфиги k8s: ```k8s/```
+* Конфиг деплоймента: ```.github/workflows/main.yml```
+* Пример пройденного пайплайна: https://github.com/zhukov-msu/otus-hw/actions/runs/11683116904
+
+![Секреты в репо](resources/secrets.png)
+![Кластер](resources/kube-yandex.png)
+![Healthchek](resources/status-local.png)
+![Предикт локально через port-forward](resources/pred-local.png)
+![Предикт по внешнему ip](resources/pred-cluster.png)
+
+
 ## Решение задания 6
 
 * **DAG** находится здесь: ```dags/run_model_fit.py```. В нем мало что обновилось, т.к. я просто встроил в тот же submit ab-test 
