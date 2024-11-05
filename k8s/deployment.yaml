@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: predictor
-        image: zhukovmsu/otus-hw:eb2adc44e2c4a3f6d8f3460e4a83168cf162acdb
+        image: zhukovmsu/otus-hw:bcb79959155da3160b82efbd5a97ff79f24a63a2
         ports:
         - containerPort: 8890

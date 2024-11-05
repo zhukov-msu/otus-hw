@@ -1,18 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: title
+  name: predictor-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: predictor
   rules:
-    - http:
-        paths:
-          - path: /testpath
-            pathType: Prefix
-            backend:
-              service:
-                name: title
-                port:
-                  number: 80
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: predictor-service
+            port:
+              number: 80

@@ -22,5 +22,6 @@ EXPOSE 8000
 EXPOSE 80
 EXPOSE 8080
 EXPOSE 8090
+WORKDIR ./src
 
-CMD ["bash", "scripts/entrypoint.sh"]
+CMD ["bash", "../scripts/entrypoint.sh"]
