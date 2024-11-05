@@ -40,7 +40,9 @@ jobs:
           pip install fastapi numpy uvicorn scikit-learn pytest
 #          pip install -e .
       - name: Unit tests with pytest
-        run:
+        run: |
+          ls -la
+          pwd
           pytest src/tests.py
 
 #  build:
