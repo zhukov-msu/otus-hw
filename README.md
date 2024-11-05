@@ -12,8 +12,11 @@
 Кластер
 ![Кластер](resources/kube-yandex.png)
 Healthcheck
+
 ![Healthcheck](resources/status-local.png)
+
 Предикт локально через port-forward
+
 ![Предикт локально через port-forward](resources/pred-local.png)
 Предикт по внешнему ip
 ![Предикт по внешнему ip](resources/pred-cluster.png)
