@@ -27,7 +27,7 @@ class Transaction(BaseModel):
 
 
 app = FastAPI()
-with open("src/model.pkl", "rb") as f:
+with open("model.pkl", "rb") as f:
     model = pickle.load(f)
 # model = LogisticRegressionModel.load("./lr.model")
 
