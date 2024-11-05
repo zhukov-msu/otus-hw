@@ -1,6 +1,10 @@
+import os
+
 import pytest
 
 from src.app import predict, Transaction
+
+print(os.getcwd())
 
 
 @pytest.fixture
