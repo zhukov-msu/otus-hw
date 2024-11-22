@@ -1,5 +1,26 @@
 # otus-hw
 
+## Решение задания 8 - (Асинхронный потоковый режим , 33 урок)
+
+* Producer: ```src/kafka_producer.py```
+* Consumer: ```src/kafka_consumer.py```
+* DAG: ```dags/run_model_inference.py```
+
+Кафка в YC
+![Кафка](resources/kafka-cluster.png)
+
+Топики
+![Кафка](resources/topics.png)
+
+Работа продюсера
+![pushing_data](resources/pushing_data.png)
+![data_input](resources/data_input.png)
+
+Оценка интенсивности событий
+![exp](resources/exp.png)
+
+Кластер обрабатывает около 4 тысяч транзакций в секунду, а источник генерировал около 25 тысяч транзакций. 
+
 ## Решение задания 9 - (обновление моделей, 37 урок)
 
 * Приложение на fast api: ```src/app.py```
