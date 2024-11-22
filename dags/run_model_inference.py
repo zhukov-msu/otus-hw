@@ -1,14 +1,14 @@
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime
+
 from airflow import DAG, settings
 from airflow.models import Connection, Variable
-from airflow.utils.trigger_rule import TriggerRule
 from airflow.providers.yandex.operators.yandexcloud_dataproc import (
     DataprocCreateClusterOperator,
     DataprocCreatePysparkJobOperator,
     DataprocDeleteClusterOperator,
 )
-
+from airflow.utils.trigger_rule import TriggerRule
 
 # Common settings for your environment
 YC_DP_FOLDER_ID = 'b1gmi1gs1575jti9jgnl'
@@ -89,7 +89,7 @@ with DAG(
     )
     model_inference = DataprocCreatePysparkJobOperator(
         task_id='dp-cluster-inference-task',
-        main_python_file_uri=f's3a://{YC_SOURCE_BUCKET}/model_inference.py',
+        main_python_file_uri=f's3a://{YC_SOURCE_BUCKET}/kafka_consumer.py',
         file_uris=["https://storage.yandexcloud.net/cloud-certs/CA.pem"],
         connection_id=ycSA_connection.conn_id,
         dag=ingest_dag,

@@ -1,63 +1,127 @@
-from datetime import datetime
-import os
-import time
+import json
+import random
+from typing import Dict, NamedTuple
 
-from kafka import KafkaProducer
-import mlflow
+import kafka
+from faker import Faker
 
-REGISTRY_SERVER_HOST = "89.169.153.43"
-TRACKING_SERVER_HOST = "89.169.153.43"
-FILE_TO_SEND = "2019-09-21.txt"
-BOOTSTRAP_SERVERS = ['rc1b-3kiaqqqtp7bu7kue.mdb.yandexcloud.net']
+fake = Faker()
 
-
-def send_to_kafka(producer, topic, chunk):
-    for line in chunk:
-        producer.send(topic, value=line.encode("utf-8"))
-    producer.flush()
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-def process_file_in_chunks(file_path, producer, topic, chunk_size=50000):
-    experiment = mlflow.set_experiment("hometask_7_experiment")
-    experiment_id = experiment.experiment_id
-    run_name = f"run_{datetime.now()}"
-    with mlflow.start_run(run_name=run_name, experiment_id=experiment_id):
-        with open(file_path, 'r') as file:
-            chunk = []
-            start_time = time.time()
-            for i, line in enumerate(file):
-                chunk.append(line.strip())
-                if (i + 1) % chunk_size == 0:
-                    send_to_kafka(producer, topic, chunk)
+class RecordMetadata(NamedTuple):
+    key: int
+    topic: str
+    partition: int
+    offset: int
 
-                    # log tps to mlflow
-                    end_time = time.time()
-                    transactions_per_second = len(chunk) / (end_time - start_time)
-                    mlflow.log_metric("transactions_per_second_sent_to_kafka", transactions_per_second)
-                    start_time = end_time
 
-                    chunk.clear()
-
-            if chunk:
-                send_to_kafka(producer, topic, chunk)
-
+def check_kafka_connection(consumer):
+    try:
+        partitions = consumer.partitions_for_topic('input')
+        print(partitions)
+        if partitions:
+            logger.info("Successfully connected to Kafka topic 'input' with partitions: %s", partitions)
+        else:
+            logger.warning("Connected to Kafka but no partitions found for topic 'input'.")
+    except Exception as e:
+        logger.error("Failed to connect to Kafka topic 'input': %s", e)
 
 def main():
-    producer = KafkaProducer(
-        bootstrap_servers=BOOTSTRAP_SERVERS,
+    kafka_servers = ["rc1b-3kiaqqqtp7bu7kue.mdb.yandexcloud.net:9091"]
+
+    producer = kafka.KafkaProducer(
+        bootstrap_servers=kafka_servers,
         security_protocol="SASL_SSL",
         sasl_mechanism="SCRAM-SHA-512",
-        sasl_plain_username='mlops',
-        sasl_plain_password='otus-mlops',
-        ssl_cafile="/usr/local/share/ca-certificates/Yandex/YandexInternalRootCA.crt")
+        sasl_plain_username="mlops",
+        sasl_plain_password="otus-mlops",
+        ssl_cafile="/usr/local/share/ca-certificates/Yandex/YandexInternalRootCA.crt",
+        api_version=(0, 11, 5),
+        value_serializer=serialize,
+        # max_block_ms=1200000,
+        # request_timeout_ms=120000,
+    )
 
-    topic = 'input'
 
-    os.environ["MLFLOW_S3_ENDPOINT_URL"] = "https://storage.yandexcloud.net"
-    mlflow.set_tracking_uri(f"http://{TRACKING_SERVER_HOST}:5000")
-    mlflow.set_registry_uri(f"http://{REGISTRY_SERVER_HOST}:5000")
+    # consumer = kafka.KafkaConsumer(
+    #     'input',
+    #     bootstrap_servers=kafka_servers,
+    #     security_protocol="SASL_SSL",
+    #     sasl_mechanism="SCRAM-SHA-512",
+    #     sasl_plain_username='mlops',
+    #     sasl_plain_password='otus-mlops',
+    #     ssl_cafile="/usr/local/share/ca-certificates/Yandex/YandexInternalRootCA.crt",
+    #     fetch_min_bytes=100000,
+    #     fetch_max_wait_ms=3000,
+    #     # session_timeout_ms=30000,
+    #     api_version=(0, 11, 5),
+    #     group_id='consume-to-predict',
+    #     auto_offset_reset='earliest',  # Читает с самого начала, если нет смещения
+    #     enable_auto_commit=True
+    # )
 
-    process_file_in_chunks(FILE_TO_SEND, producer, topic)
+    # Проверка подключения к Kafka
+    # check_kafka_connection(consumer)
+
+    # consumer = kafka.KafkaConsumer(group_id='test', bootstrap_servers=[kafka_server])
+    # topics = consumer.topics()
+
+    # if not topics:
+    #     raise RuntimeError()
+
+    try:
+        while True:
+            record_md = send_message(producer, "input")
+            print(
+                f"Msg sent. Key: {record_md.key}, topic: {record_md.topic}, partition:{record_md.partition}, offset:{record_md.offset}"
+            )
+            # time.sleep(10)
+    except KeyboardInterrupt:
+        print(" KeyboardInterrupted!")
+        producer.flush()
+        producer.close()
+
+
+def send_message(producer: kafka.KafkaProducer, topic: str) -> RecordMetadata:
+    click = generate_click()
+    key = str(click["tranaction_id"]).encode("ascii")
+    print(key)
+    print(click)
+    future = producer.send(
+        topic=topic,
+        key=key,
+        value=click,
+    )
+    print(1)
+
+    # Block for 'synchronous' sends
+    record_metadata = future.get(timeout=1)
+    return RecordMetadata(
+        key=click["tranaction_id"],
+        topic=record_metadata.topic,
+        partition=record_metadata.partition,
+        offset=record_metadata.offset,
+    )
+
+
+def generate_click() -> Dict:
+    return {
+        "tranaction_id": random.randint(0, 1000),
+        "tx_datetime": fake.date_time_between(start_date="-1y", end_date="+1y").isoformat(),
+        "customer_id": random.randint(0, 10000),
+        "terminal_id": random.randint(0, 1000),
+        "tx_amount": random.uniform(0, 100000),
+        "tx_time_seconds": random.randint(0, 1000000),
+        "tx_time_days": random.randint(0, 100),
+    }
+
+
+def serialize(msg: Dict) -> bytes:
+    return json.dumps(msg).encode("utf-8")
 
 
 if __name__ == "__main__":
