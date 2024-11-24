@@ -9,7 +9,7 @@ ENV PYTHONPATH=$APP_HOME
 COPY requirements.txt .
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install fastapi numpy uvicorn scikit-learn
+RUN pip install fastapi numpy uvicorn scikit-learn starlette-exporter
 #RUN pip install -r requirements.txt
 
 
