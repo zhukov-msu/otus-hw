@@ -5,7 +5,7 @@ metadata:
   labels:
     app: predictor
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: predictor
@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: predictor
-        image: zhukovmsu/otus-hw:c1231b7a97d33b0b226ae8481a22f6d1f461f202
+        image: zhukovmsu/otus-hw:1889b8d42d668cb3c64c3d6c6422807c4da886a6
         ports:
         - containerPort: 8890

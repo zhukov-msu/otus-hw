@@ -1,5 +1,25 @@
 # otus-hw
 
+## Решение задания 10 - (Алертинг)
+
+Несколько подов для модели
+![pods](resources/pods.png)
+
+Сервер Prometheus
+![prom](resources/prometheus.png)
+![monitoring](resources/monitoring.png)
+
+Метрики
+![m1](resources/predictor_metrics.png)
+
+Алертинг
+![a](resources/alerting_param.png)
+![a](resources/alerting_trshld.png)
+![a](resources/alert_ok.png)
+
+Сработавший алерт
+![a](resources/alert_firing.png)
+
 ## Решение задания 8 - (Асинхронный потоковый режим , 33 урок)
 
 * Producer: ```src/kafka_producer.py```
